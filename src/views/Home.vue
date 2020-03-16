@@ -13,6 +13,12 @@ export default {
   name: 'Home',
   components: {
     HelloWorld
+  },
+  methods:{
+
+  },created() {
+    console.log('created')
+    console.log(this.$store.state.user.token)
   }
 }
 </script>

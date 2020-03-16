@@ -5,8 +5,28 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    user:{
+      token: null,
+    }
   },
   mutations: {
+    onInit(state){
+      console.log('onInit()')
+      let x = localStorage.getItem('user');
+      if (x != null){
+        state.user = JSON.parse(x);
+      }
+      console.log(state)
+    },
+    setToken(state, token){
+      state.user.token = token;
+    },
+    setTokenRemember(state, token){
+      state.user.token = token;
+      localStorage.setItem('user', JSON.stringify(state.user));
+    },
+
+
   },
   actions: {
   },
