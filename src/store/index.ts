@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
     user:{
       token: null,
+      role: null,
     }
   },
   mutations: {
@@ -23,6 +24,13 @@ export default new Vuex.Store({
     },
     setTokenRemember(state, token){
       state.user.token = token;
+      localStorage.setItem('user', JSON.stringify(state.user));
+    },
+    setRole(state, role){
+      state.user.role = role;
+    },
+    setRoleRemember(state, role){
+      state.user.role = role;
       localStorage.setItem('user', JSON.stringify(state.user));
     },
 

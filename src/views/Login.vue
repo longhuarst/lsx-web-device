@@ -110,6 +110,25 @@
                                 console.log(this.$store.state.user.token)
 
 
+                                //获取用户的权限
+                                this.$axios.post('http://localhost:18883/getRole')
+                                .then(res => {
+                                    console.log(res);
+
+                                    if (res.data.code == 20000){
+                                        //成功
+
+                                        if (values.remember == false) {
+                                            this.$store.commit("setRole", res.data.data);
+                                        }else{
+                                            this.$store.commit("setRoleRemember", res.data.data);
+                                        }
+                                    }
+                                }).catch(err => {
+                                    console.log(err);
+                                })
+
+
 
                             }else{
                                 this.$message.error('失败:'+response.data.data);

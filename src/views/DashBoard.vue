@@ -27,6 +27,10 @@
                         <a-icon type="user" />
                         <span class="nav-text">设备监控</span>
                     </a-menu-item>
+                    <a-menu-item v-if="this.$store.state.user.role.indexOf('admin') != -1 " key="5" @click="select(5)">
+                        <a-icon type="plus-circle" />
+                        <span class="nav-text">创建设备</span>
+                    </a-menu-item>
                 </a-menu>
             </a-layout-sider>
             <a-layout>
@@ -37,6 +41,7 @@
                         <DeviceBinding v-if="curKey == 2"></DeviceBinding>
                         <DeviceList v-if="curKey == 3"></DeviceList>
                         <DeviceDashBoard v-if="curKey == 4"></DeviceDashBoard>
+                        <DeviceAdd v-if="curKey == 5"></DeviceAdd>
                     </div>
                 </a-layout-content>
                 <a-layout-footer style="textAlign: center">
@@ -55,6 +60,7 @@
     import DeviceBinding from "@/views/DeviceBinding";
     import DeviceList from "@/views/DeviceList";
     import DeviceDashBoard from "@/views/DeviceDashBoard";
+    import DeviceAdd from "@/views/DeviceAdd";
 
     export default {
         // components:{
@@ -64,7 +70,7 @@
         //     DeviceDashBoard
         // },
         name: "DashBoard.vue",
-        components: {DeviceDashBoard, DeviceList, DeviceBinding, User},
+        components: {DeviceDashBoard, DeviceList, DeviceBinding, User, DeviceAdd},
         data() {
             return {
                 selectedKeys: ['1'],

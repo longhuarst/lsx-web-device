@@ -24,13 +24,29 @@
                 @cancel="no(record)"
                 okText="确定"
                 cancelText="取消"
+                v-show="!isAdmin"
         >
+
             <a @click="unBinding(record)">解除绑定</a>
+        </a-popconfirm>
+
+                  <a-popconfirm
+                          title="确定要删除该设备吗? [数据不会被清空]"
+                          @confirm="yes(record)"
+                          @cancel="no(record)"
+                          okText="确定"
+                          cancelText="取消"
+                          v-show="isAdmin"
+                  >
+
+            <a  @click="deleteDevice(record)">删除设备</a>
         </a-popconfirm>
 
 
     </span>
         </a-table>
+
+
 
 
         <a-drawer
@@ -104,6 +120,7 @@
                 listData,
                 visible: false,
                 placement: 'right',
+                isAdmin: false,
             }
         },
         methods:{
@@ -119,34 +136,73 @@
             },
             yes(record){
                 //删除
-                this.$axios.post("http://localhost:18887/deviceBinding/unbinding?uuid="+record.uuid.toString())
-                .then(res => {
-                    console.log(res);
-                    this.$message.destroy();
-                    console.log(res.data.code)
-                    if (res.data.code == 20000){
-                        this.$message.success('解除成功')
-                        console.log('成功')
+                //根据 用户类型 不同的
 
-                        this.load();
-                        //重新加载数据
-                        // created();
-                    }else{
+                if (this.isAdmin){
+                    //删除
+                    this.$axios.post("http://localhost:18887/device/deleteDeviceByUuid?uuid="+record.uuid.toString())
+                        .then(res => {
+                            console.log(res);
+                            this.$message.destroy();
+                            console.log(res.data.code)
+                            if (res.data.code == 20000){
+                                this.$message.success('删除成功')
+                                console.log('成功')
+
+                                this.load();
+                                //重新加载数据
+                                // created();
+                            }else{
+                                this.$message.error('删除失败')
+                                console.log('失败')
+                            }
+                        }).catch(err => {
+                        console.log(err)
+                        this.$message.destroy();
+                        this.$message.error('删除失败')
+                        console.log('失败')
+                    })
+                }else{
+                    //解除绑定
+                    this.$axios.post("http://localhost:18887/deviceBinding/unbinding?uuid="+record.uuid.toString())
+                        .then(res => {
+                            console.log(res);
+                            this.$message.destroy();
+                            console.log(res.data.code)
+                            if (res.data.code == 20000){
+                                this.$message.success('解除成功')
+                                console.log('成功')
+
+                                this.load();
+                                //重新加载数据
+                                // created();
+                            }else{
+                                this.$message.error('解除失败')
+                                console.log('失败')
+                            }
+                        }).catch(err => {
+                        console.log(err)
+                        this.$message.destroy();
                         this.$message.error('解除失败')
                         console.log('失败')
-                    }
-                }).catch(err => {
-                    console.log(err)
-                    this.$message.destroy();
-                    this.$message.error('解除失败')
-                    console.log('失败')
-                })
+                    })
+                }
+
             },
             no(record){
 
             },
             load(){
-                this.$axios.post("http://localhost:18887/user/loadAllBindingDevice")
+                let url = "";
+                if(this.$store.state.user.role.indexOf('admin') != -1){
+                    //管理员
+                    this.isAdmin = true
+                    url ="http://localhost:18887/user/loadAllAdminDevice";
+                }else{
+                    this.isAdmin = false
+                    url = "http://localhost:18887/user/loadAllBindingDevice";
+                }
+                this.$axios.post(url)
                     .then(res => {
                         console.log(res);
                         this.listData = res.data.data
@@ -159,6 +215,9 @@
             },
             onClose() {
                 this.visible = false;
+            },
+            deleteDevice(record){
+              //删除设备
             },
 
 

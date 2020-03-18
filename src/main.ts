@@ -32,6 +32,17 @@ Vue.use(Antd);
 import axios from '@/axios/axios.ts';
 Vue.prototype.$axios = axios;
 
+
+// import clipboard from 'clipboard';
+// //注册到vue原型上
+// Vue.prototype.clipboard = clipboard;
+//复制到粘贴板插件
+import VueClipboard from 'vue-clipboard2'
+VueClipboard.config.autoSetContainer = true
+Vue.use(VueClipboard)
+
+
+
 new Vue({
   router,
   store,
