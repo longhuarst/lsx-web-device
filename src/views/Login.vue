@@ -83,10 +83,15 @@
                         this.$message.destroy();
                         const logining_ = this.$message.loading('正在登陆...');
 
+                        let config = {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
 
                         // logining_;
                         //发起http 请求
-                        this.$axios.post('http://localhost:18884/user/login',formData)
+                        this.$axios.post('http://localhost:18884/user/login', formData)
                         .then( response => {
                             console.log(response);
                             this.$message.destroy();//销毁之前的
@@ -107,7 +112,7 @@
 
 
                             }else{
-                                this.$message.error('失败:'+res.data.data);
+                                this.$message.error('失败:'+response.data.data);
                             }
 
                         }).catch(error => {

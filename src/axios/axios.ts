@@ -12,11 +12,14 @@ axios.interceptors.request.use(
 
         console.log(config)
         const token = 'bearer ' + store.state.user.token;
+        // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
         if (store.state.user.token){
 
-            config.withCredentials = true
+            // config.withCredentials = true
 
-            config.headers.Authorization = token;
+            //config.headers.Authorization = token
+            config.headers.Authorization = token
+
             console.log('addToken')
             console.log(config)
         }else{
