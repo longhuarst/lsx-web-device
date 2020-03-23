@@ -39,6 +39,7 @@
                           v-show="isAdmin"
                   >
 
+
             <a  @click="deleteDevice(record)">删除设备</a>
         </a-popconfirm>
 
@@ -49,16 +50,61 @@
 
 
 
+
+
         <a-drawer
-                title="Basic Drawer"
+                class="deviceDrawer"
+                title="设备详情"
                 :placement="placement"
                 :closable="false"
                 @close="onClose"
                 :visible="visible"
+                :width="720"
         >
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
+
+
+            <template>
+                <a-table :columns="deviceColumns" :dataSource="deviceMessage">
+                    <a slot="name" slot-scope="text">{{text}}</a>
+                </a-table>
+            </template>
+
+
+
+            <template>
+                <a-form :form="form">
+                    <a-form-item
+                            label="话题"
+                    >
+                        <a-input
+                                v-decorator="[
+          'topic',
+          { rules: [{ required: true, message: '请输入话题' }] },
+        ]"
+                                placeholder="请输入话题"
+                        />
+                    </a-form-item>
+                    <a-form-item
+                            label="消息"
+                    >
+                        <a-input
+                                v-decorator="[
+          'msg',
+        ]"
+                                placeholder="请输入消息"
+                        />
+                    </a-form-item>
+
+                    <a-form-item >
+                        <a-button type="primary" @click="check">
+                            提交
+                        </a-button>
+                    </a-form-item>
+                </a-form>
+            </template>
+
+
+
         </a-drawer>
 
 
@@ -102,6 +148,36 @@
 
 
 
+    const deviceColumns = [
+        {
+            dataIndex: 'topic',
+             title: '话题',
+            key: 'topic',
+            slots: { title: 'customTitle' },
+            scopedSlots: { customRender: 'topic' },
+        },
+        {
+            title: '消息',
+            key: 'msg',
+            dataIndex: 'msg',
+            scopedSlots: { customRender: 'msg' },
+        },
+        {
+            title: '时间',
+            key: 'date',
+            dataIndex: 'date',
+            scopedSlots: { customRender: 'date' },
+        },
+    ];
+
+
+    let deviceMessage = [
+
+    ];
+
+
+
+
     export default {
         name: "DeviceList.vue",
         created() {
@@ -118,9 +194,18 @@
             return{
                 columns,
                 listData,
+                deviceColumns,
+                deviceMessage,
                 visible: false,
                 placement: 'right',
                 isAdmin: false,
+                form: this.$form.createForm(this, { name: 'dynamic_rule' }),
+                more:{
+                    uuid: null,
+                    testTopic: null,
+                    testMsg: null,
+                }
+
             }
         },
         methods:{
@@ -128,7 +213,19 @@
                 console.log('更多操作')
                 console.log(record);
 
+                this.deviceMessage = []
+
+                this.more.uuid = record.uuid;
+
+
+                this.loadDeviceMessage(record.uuid)
+
+
+
                 this.showDrawer(); //显示更多操作
+
+
+
             },
             unBinding(record){
                 console.log('解除绑定')
@@ -219,6 +316,45 @@
             deleteDevice(record){
               //删除设备
             },
+            check() {
+                this.form.validateFields((err,values) => {
+                    if (!err) {
+                        console.info('success');
+                        console.log(values)
+                        this.$axios.post('http://localhost:18887/device/userTestUpload?uuid='+this.more.uuid+"&topic="+values.topic+"&msg="+values.msg)
+                        .then(res =>{
+                            console.log(res);
+
+                            this.loadDeviceMessage(this.more.uuid)
+
+
+                        }).catch(err =>{
+                            console.log(err);
+                        })
+                    }
+                });
+            },
+            loadDeviceMessage(uuid){
+                this.$axios.post("http://localhost:18887/device/getDeviceMessage?uuid="+uuid.toString())
+                    .then(res => {
+                        console.log(res);
+
+                        if (res.data.code == 20000){
+
+
+                            console.log('设备数据：')
+
+                            this.deviceMessage = res.data.data;
+                            console.log(this.deviceMessage)
+
+                        }else{
+                            this.$message.error('读取设备数据出错：'+res.data.data);
+                        }
+
+                    }).catch(err =>{
+                    console.log(err);
+                })
+            }
 
 
         }
@@ -227,5 +363,11 @@
 </script>
 
 <style scoped>
+
+
+
+    .deviceDrawer{
+        width: 800px;
+    }
 
 </style>

@@ -8,6 +8,8 @@ import Forget from '@/views/Forget.vue';
 
 import DashBoard from '@/views/DashBoard.vue'
 
+import Chat from '@/views/chat/Chat.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -43,6 +45,11 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: DashBoard,
+  },
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: Chat,
   }
 ]
 

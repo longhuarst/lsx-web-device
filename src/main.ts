@@ -33,6 +33,7 @@ import axios from '@/axios/axios.ts';
 Vue.prototype.$axios = axios;
 
 
+
 // import clipboard from 'clipboard';
 // //注册到vue原型上
 // Vue.prototype.clipboard = clipboard;
