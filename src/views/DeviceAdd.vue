@@ -189,6 +189,7 @@
             },
             onCopy(e) {
                 console.log('复制成功！');
+                console.log(this.copyUrl)
             },
             onError(e) {
                 console.log('复制失败！');
